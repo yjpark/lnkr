@@ -45,7 +45,8 @@ setup(
     install_requires=[
         'pytz',
         'blessings>=1.5.1',
-        'linktastic'
+        'linktastic',
+        'pytoml'
         ],
     cmdclass={'test': PyTest},
     packages=['lnkr'],
