@@ -6,7 +6,7 @@ import codecs
 import os
 import sys
 
-__version__ = "0.0.1"
+__version__ = "0.1.0"
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -46,7 +46,8 @@ setup(
         'pytz',
         'blessings>=1.5.1',
         'linktastic',
-        'pytoml'
+        'pytoml',
+        'formic',
         ],
     cmdclass={'test': PyTest},
     packages=['lnkr'],
