@@ -1,3 +1,8 @@
+0.1.1
+-----
+
+- Bugfix with symlink file again
+
 0.1.0
 -----
 Basic functions implemented:

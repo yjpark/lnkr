@@ -190,6 +190,7 @@ def do_link_file_link(key, from_path, to_path):
             (lnkr.format_param(key), lnkr.format_error('"link" Mode Not Implemented'), lnkr.format_path(from_path), lnkr.format_path(to_path)))
 
 def do_link_file_symlink(key, from_path, to_path):
+    cleanup_path(to_path)
     if not check_parent_folder(key, to_path):
         return
     linktastic.symlink(from_path, to_path)
