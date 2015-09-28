@@ -147,18 +147,28 @@ def do_link_folder_copy(key, from_path, to_path):
     #TODO: not using os.system to support Windows
     os.system('cp -r %s "%s" "%s"' % (lnkr.verbose_mode and '-v' or '', from_path, to_path))
     lnkr.info('Link Folder, Component: %s -> %s\n\tFrom: %s\n\tTo: %s' %
-            (lnkr.format_param(key), lnkr.format_error('"copy" Done'), lnkr.format_path(from_path), lnkr.format_path(to_path)))
+            (lnkr.format_param(key), lnkr.format_param('"copy" Done'), lnkr.format_path(from_path), lnkr.format_path(to_path)))
 
 def do_link_folder_link(key, from_path, to_path):
     lnkr.info('Link Folder, Component: %s -> %s\n\tFrom: %s\n\tTo: %s' %
             (lnkr.format_param(key), lnkr.format_error('"link" Mode Not Implemented'), lnkr.format_path(from_path), lnkr.format_path(to_path)))
 
+def get_folder_rel_from_path(from_path, to_path):
+    prefix = os.path.dirname(os.path.commonprefix([from_path, to_path]))
+    if prefix:
+        old_from_path = from_path
+        from_path = os.path.join(os.path.relpath(prefix, to_path), os.path.relpath(from_path, prefix))
+        lnkr.verbose("get_folder_rel_from_path()\n\told_from_path: %s\n\tto_path: %s\n\tprefix: %s\n\tfrom_path: %s" %
+                     (lnkr.format_path(old_from_path), lnkr.format_path(to_path), lnkr.format_path(prefix), lnkr.format_path(from_path)))
+    return from_path
+
 def do_link_folder_symlink(key, from_path, to_path):
     if not check_parent_folder(key, to_path):
         return
+    from_path = get_folder_rel_from_path(from_path, to_path)
     linktastic.symlink(from_path, to_path)
     lnkr.info('Link Folder, Component: %s -> %s\n\tFrom: %s\n\tTo: %s' %
-            (lnkr.format_param(key), lnkr.format_error('"symlink" Done'), lnkr.format_path(from_path), lnkr.format_path(to_path)))
+            (lnkr.format_param(key), lnkr.format_param('"symlink" Done'), lnkr.format_path(from_path), lnkr.format_path(to_path)))
 
 def do_link_file(mode, key, from_path, to_path, file_path):
     from_path = os.path.join(from_path, file_path)
@@ -183,18 +193,30 @@ def do_link_file_copy(key, from_path, to_path):
     #TODO: not using os.system to support Windows
     os.system('cp %s "%s" "%s"' % (lnkr.verbose_mode and '-v' or '', from_path, to_path))
     lnkr.info('Link File, Component: %s -> %s\n\tFrom: %s\n\tTo: %s' %
-            (lnkr.format_param(key), lnkr.format_error('"copy" Done'), lnkr.format_path(from_path), lnkr.format_path(to_path)))
+            (lnkr.format_param(key), lnkr.format_param('"copy" Done'), lnkr.format_path(from_path), lnkr.format_path(to_path)))
 
 def do_link_file_link(key, from_path, to_path):
     lnkr.info('Link File, Component: %s -> %s\n\tFrom: %s\n\tTo: %s' %
             (lnkr.format_param(key), lnkr.format_error('"link" Mode Not Implemented'), lnkr.format_path(from_path), lnkr.format_path(to_path)))
 
+def get_file_rel_from_path(from_path, to_path):
+    from_dir = os.path.dirname(from_path)
+    to_dir = os.path.dirname(to_path)
+    prefix = os.path.dirname(os.path.commonprefix([from_dir, to_dir]))
+    if prefix:
+        old_from_path = from_path
+        from_path = os.path.join(os.path.relpath(prefix, to_dir), os.path.relpath(from_dir, prefix), os.path.basename(from_path))
+        lnkr.verbose("get_file_rel_from_path()\n\told_from_path: %s\n\tto_path: %s\n\tprefix: %s\n\tfrom_path: %s" %
+                     (lnkr.format_path(old_from_path), lnkr.format_path(to_path), lnkr.format_path(prefix), lnkr.format_path(from_path)))
+    return from_path
+
 def do_link_file_symlink(key, from_path, to_path):
     cleanup_path(to_path)
     if not check_parent_folder(key, to_path):
         return
+    from_path = get_file_rel_from_path(from_path, to_path)
     linktastic.symlink(from_path, to_path)
     lnkr.info('Link File, Component: %s -> %s\n\tFrom: %s\n\tTo: %s' %
-            (lnkr.format_param(key), lnkr.format_error('"symlink" Done'), lnkr.format_path(from_path), lnkr.format_path(to_path)))
+            (lnkr.format_param(key), lnkr.format_param('"symlink" Done'), lnkr.format_path(from_path), lnkr.format_path(to_path)))
 
 

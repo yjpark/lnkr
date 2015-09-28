@@ -1,3 +1,8 @@
+0.1.2
+-----
+
+- Detech reltive path for symlink
+
 0.1.1
 -----
 
