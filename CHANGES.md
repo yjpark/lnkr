@@ -1,3 +1,8 @@
+0.1.3
+-----
+
+- Bugfix with folder relative symlink
+
 0.1.2
 -----
 
