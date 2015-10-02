@@ -1,3 +1,8 @@
+0.1.4
+-----
+
+- Not using blessings under windows (still depends on `cp`)
+
 0.1.3
 -----
 
