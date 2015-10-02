@@ -1,4 +1,5 @@
 import lnkr
+import term
 from app_config import AppConfig
 
 class WrapperConfig(AppConfig):

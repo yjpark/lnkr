@@ -1,6 +1,7 @@
 import os
 
 import lnkr
+import term
 from toml_config import TomlConfig
 from import_section import ImportSection, new_import_section
 
@@ -14,7 +15,7 @@ class AppConfig(TomlConfig):
         TomlConfig.__init__(self, path)
 
     def parse(self):
-        lnkr.verbose('\nParse %s Config: %s' % (self.kind, lnkr.format_path(self.path)))
+        term.verbose('\nParse %s Config: %s' % (self.kind, term.format_path(self.path)))
         for key in self.values:
             value = self.values[key]
             if isinstance(value, dict):
@@ -24,9 +25,9 @@ class AppConfig(TomlConfig):
             else:
                 self.attribs[key] = value
         for key in self.attribs:
-            lnkr.verbose('Parse %s Config Attrib: %s = %s' % (self.kind, lnkr.format_path(key), lnkr.format_param(self.attribs[key])))
+            term.verbose('Parse %s Config Attrib: %s = %s' % (self.kind, term.format_path(key), term.format_param(self.attribs[key])))
         for section in self.import_sections:
-            lnkr.verbose('Parse %s Config Import Section: %s' % (self.kind, lnkr.format_param(section.__str__())))
+            term.verbose('Parse %s Config Import Section: %s' % (self.kind, term.format_param(section.__str__())))
         return len(self.import_sections) > 0
 
     def get_import_section(self, key):

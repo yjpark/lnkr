@@ -1,5 +1,6 @@
 import os
 import lnkr
+import term
 
 from folder_config import FolderConfig
 from file_config import FileConfig
@@ -47,7 +48,7 @@ class ExportSection:
         self.requires = self.get_section_value(KEY_REQUIRES, True) or []
 
         if len(self.folders) == 0 and len(self.files):
-            lnkr.error('Need to provide either "folders" or "files": %s' % lnkr.format_param(self.key))
+            term.error('Need to provide either "folders" or "files": %s' % term.format_param(self.key))
             return False
 
         return True
@@ -58,4 +59,4 @@ def new_export_section(key, values):
     if section.valid:
         return section
     else:
-        lnkr.error('Invalid Export Section: %s -> %s' % (key, values))
+        term.error('Invalid Export Section: %s -> %s' % (key, values))

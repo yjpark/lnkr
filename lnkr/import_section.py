@@ -1,5 +1,6 @@
 import os
 import lnkr
+import term
 
 KEY_LOCAL = 'local'
 KEY_REMOTE = 'remote'
@@ -34,7 +35,7 @@ class ImportSection:
         self.mode = self.get_section_value(KEY_MODE, True)
 
         if self.local is None and self.remote is None:
-            lnkr.error('Need to provide either "local" or "remote": %s' % lnkr.format_param(self.key))
+            term.error('Need to provide either "local" or "remote": %s' % term.format_param(self.key))
             return False
 
         return True
@@ -52,7 +53,7 @@ class ImportSection:
         return self.do_load(os.path.join(self.path, self.local))
 
     def load_remote(self):
-        lnkr.info('Not Implemented: Import Remote Package')
+        term.info('Not Implemented: Import Remote Package')
         return False
 
     def check_mode(self):
@@ -74,7 +75,7 @@ class ImportSection:
         elif self.remote is not None:
             self.loaded = self.load_remote()
         if not self.loaded:
-            lnkr.error('Load Import Section Failed: %s' % lnkr.format_param(self.key))
+            term.error('Load Import Section Failed: %s' % term.format_param(self.key))
 
     def get_component(self, key):
         export_section = self.package_config.get_export_section(key)
@@ -91,4 +92,4 @@ def new_import_section(path, key, values):
     if section.valid:
         return section
     else:
-        lnkr.error('Invalid Import Section: %s -> %s' % (key, values))
+        term.error('Invalid Import Section: %s -> %s' % (key, values))

@@ -1,6 +1,7 @@
 import os
 
 import lnkr
+import term
 
 KEY_FROM = 'from'
 KEY_TO = 'to'
@@ -18,7 +19,7 @@ class FolderConfig:
         self.to_value = self.get_section_value(KEY_TO, True)
 
         if self.from_value is None or self.to_value is None:
-            lnkr.error('Need to provide both "from" and "to": %s' % lnkr.format_param(self.key))
+            term.error('Need to provide both "from" and "to": %s' % term.format_param(self.key))
             return False
 
         return True
@@ -32,5 +33,5 @@ class FolderConfig:
         for key in attribs:
             old_to_path = to_path
             to_path = to_path.replace('${%s}' % key, attribs[key])
-            lnkr.verbose('\nUpdate Path: %s = %s\n\tFrom: %s\n\tTo: %s' % (lnkr.format_param(key), lnkr.format_param(attribs[key]), lnkr.format_path(old_to_path), lnkr.format_path(to_path)))
+            term.verbose('\nUpdate Path: %s = %s\n\tFrom: %s\n\tTo: %s' % (term.format_param(key), term.format_param(attribs[key]), term.format_path(old_to_path), term.format_path(to_path)))
         return to_path

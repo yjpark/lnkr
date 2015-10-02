@@ -5,12 +5,12 @@ import glob
 import plistlib
 import datetime
 import pytz
-from blessings import Terminal
 
 from app_config import AppConfig
 from package_config import PackageConfig
 from wrapper_config import WrapperConfig
 import processor
+import term
 
 PACKAGE_CONFIG_FILE_NAME = 'lnkr-export.toml'
 WRAPPER_CONFIG_FILE_NAME = 'lnkr-wrapper.toml'
@@ -26,43 +26,21 @@ ALL = 'all'
 YES = 'yes'
 NO = 'no'
 
-term = Terminal()
-
 pwd = os.path.abspath('.')
 
 test_mode = False
-verbose_mode = False
 
 skip_change_confirm = False
 
-def info(msg):
-    print term.normal + msg
-
-def verbose(msg):
-    if verbose_mode:
-        info(msg)
-
-def error(msg):
-    print term.red + msg
-
-def format_error(err):
-    return term.red(err)
-
-def format_path(path):
-    return term.blue(path)
-
-def format_param(param):
-    return term.yellow(param)
-
 def get_section_value(kind, values, key, optional):
     if not isinstance(values, dict):
-        error('[%s] Section Should Be Dict: %s' % (kind, values))
+        term.error('[%s] Section Should Be Dict: %s' % (kind, values))
     if values.has_key(key):
         return values[key]
     elif optional:
         return None
     else:
-        error('[%s] Invalid Section: %s Not Exist -> %s' % (kind, key, values))
+        term.error('[%s] Invalid Section: %s Not Exist -> %s' % (kind, key, values))
         sys.exit(EXIT_CODE_INVALID_SECTION)
 
 def get_attribs(attribs_holders):
@@ -105,14 +83,14 @@ def query_all_yes_no(question, default=None):
         raise ValueError("invalid default answer: '%s'" % default)
 
     while True:
-        error('\n' + question + format_param(prompt))
+        term.error('\n' + question + term.format_param(prompt))
         choice = raw_input().lower()
         if default is not None and choice == '':
             return valid[default]
         elif choice in valid:
             return valid[choice]
         else:
-            error("Please respond with 'all' or 'yes' or 'no' "
+            term.error("Please respond with 'all' or 'yes' or 'no' "
                              "(or 'a' or 'y' or 'n').\n")
 
 def confirm_change(question, default=None):
@@ -151,17 +129,17 @@ def load_wrapper_config(path):
 def load_config(allow_package, allow_app):
     config = load_package_config(pwd) or load_app_config(pwd)
     if config is None:
-        error('Lnkr Config File Not Found: %s' % format_path(pwd))
+        term.error('Lnkr Config File Not Found: %s' % term.format_path(pwd))
         sys.exit(EXIT_CODE_NO_CONFIG)
     elif isinstance(config, PackageConfig):
         if allow_package:
-            verbose('Packeg Config Loaded: %s' % format_path(config.path))
+            term.verbose('Packeg Config Loaded: %s' % term.format_path(config.path))
             return config
         else:
             sys.exit(EXIT_CODE_DISALLOW_PACKAGE_CONFIG)
     elif isinstance(config, AppConfig):
         if allow_app:
-            verbose('App Config Loaded: %s' % format_path(config.path))
+            term.verbose('App Config Loaded: %s' % term.format_path(config.path))
             return config
         else:
             sys.exit(EXIT_CODE_DISALLOW_APP_CONFIG)
@@ -169,10 +147,10 @@ def load_config(allow_package, allow_app):
         return None
 
 def do_lint_package(package_config):
-    info('Under Construction!')
+    term.info('Under Construction!')
 
 def do_lint_app(app_config):
-    info('Under Construction!')
+    term.info('Under Construction!')
 
 def do_lint(args):
     config = load_config(True, True)
@@ -183,11 +161,11 @@ def do_lint(args):
 
 def do_clean(args):
     app_config = load_config(False, True)
-    info('Under Construction!')
+    term.info('Under Construction!')
 
 def do_diff(args):
     app_config = load_config(False, True)
-    info('Under Construction!')
+    term.info('Under Construction!')
 
 def do_link(args):
     app_config = load_config(False, True)
@@ -207,8 +185,8 @@ def main():
                         help='Show diffs between original files vs local files')
 
     args = parser.parse_args()
-    global verbose_mode
-    verbose_mode = args.verbose
+    term.set_verbose_mode(args.verbose)
+
     global test_mode
     test_mode = args.test
 

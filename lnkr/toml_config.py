@@ -3,6 +3,7 @@ import os
 import pytoml
 
 import lnkr
+import term
 
 class TomlConfig:
     def __init__(self, path):
@@ -11,18 +12,18 @@ class TomlConfig:
         self.root_path = os.path.dirname(path)
         self.values = None
         if not os.path.isfile(self.path):
-            lnkr.verbose('File Not Exist: %s' % lnkr.format_path(self.path))
+            term.verbose('File Not Exist: %s' % term.format_path(self.path))
             self.valid = False
         else:
             self.valid = self.load() and self.parse()
             if not self.valid:
-                lnkr.error('Invalid Config [%s]: %s' % (self.__class__, lnkr.format_path(self.path)))
+                term.error('Invalid Config [%s]: %s' % (self.__class__, term.format_path(self.path)))
 
     def load(self):
         try:
             self.values = pytoml.load(open(self.path, 'rb'))
         except Exception as e:
-            lnkr.error('Failed Loading Toml Config: %s' % lnkr.format_path(self.path))
+            term.error('Failed Loading Toml Config: %s' % term.format_path(self.path))
             return False
         return True
 

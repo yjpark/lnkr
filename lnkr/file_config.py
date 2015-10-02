@@ -2,6 +2,7 @@ import os
 import formic
 
 import lnkr
+import term
 from folder_config import FolderConfig
 
 KEY_INCLUDE = 'include'
