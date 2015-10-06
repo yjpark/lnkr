@@ -47,8 +47,8 @@ class ExportSection:
         #TODO: validate requires
         self.requires = self.get_section_value(KEY_REQUIRES, True) or []
 
-        if len(self.folders) == 0 and len(self.files):
-            term.error('Need to provide either "folders" or "files": %s' % term.format_param(self.key))
+        if len(self.folders) == 0 and len(self.files) == 0 and len(self.requires) == 0:
+            term.error('Need to provide one of "requires", "folders" or "files": %s' % term.format_param(self.key))
             return False
 
         return True

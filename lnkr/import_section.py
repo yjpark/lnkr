@@ -1,14 +1,18 @@
 import os
+import sys
 import lnkr
 import term
 
 KEY_LOCAL = 'local'
 KEY_REMOTE = 'remote'
 KEY_MODE = 'mode'
+KEY_MODE_WIN = 'mode_win'
 
 MODE_COPY = 'copy'
 MODE_LINK = 'link'
 MODE_SYMLINK = 'symlink'
+
+windows_mode = sys.platform.startswith('win')
 
 class ImportSection:
     def __init__(self, path, key, values):
@@ -29,10 +33,17 @@ class ImportSection:
     def get_section_value(self, key, optional=False):
         return lnkr.get_section_value('ImportSection', self.values, key, optional)
 
+    def get_mode(self):
+        if windows_mode:
+            mode_win = self.get_section_value(KEY_MODE_WIN, True)
+            if mode_win:
+                return mode_win
+        return self.get_section_value(KEY_MODE, True)
+
     def parse(self):
         self.local = self.get_section_value(KEY_LOCAL, True)
         self.remote = self.get_section_value(KEY_REMOTE, True)
-        self.mode = self.get_section_value(KEY_MODE, True)
+        self.mode = self.get_mode()
 
         if self.local is None and self.remote is None:
             term.error('Need to provide either "local" or "remote": %s' % term.format_param(self.key))

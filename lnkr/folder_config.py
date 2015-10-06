@@ -24,14 +24,18 @@ class FolderConfig:
 
         return True
 
-    def get_from_path(self, root_path):
-        return os.path.join(root_path, self.from_value)
+    def convert_path(self, path, attribs_holders):
+        attribs = lnkr.get_attribs(attribs_holders)
+        for key in attribs:
+            old_path = path
+            path = path.replace('${%s}' % key, attribs[key])
+            term.verbose('\nUpdate Path: %s = %s\n\tFrom: %s\n\tTo: %s' % (term.format_param(key), term.format_param(attribs[key]), term.format_path(old_path), term.format_path(path)))
+        return path
+
+    def get_from_path(self, root_path, attribs_holders):
+        from_path = os.path.join(root_path, self.from_value)
+        return self.convert_path(from_path, attribs_holders)
 
     def get_to_path(self, root_path, attribs_holders):
         to_path = os.path.join(root_path, self.to_value)
-        attribs = lnkr.get_attribs(attribs_holders)
-        for key in attribs:
-            old_to_path = to_path
-            to_path = to_path.replace('${%s}' % key, attribs[key])
-            term.verbose('\nUpdate Path: %s = %s\n\tFrom: %s\n\tTo: %s' % (term.format_param(key), term.format_param(attribs[key]), term.format_path(old_to_path), term.format_path(to_path)))
-        return to_path
+        return self.convert_path(to_path, attribs_holders)

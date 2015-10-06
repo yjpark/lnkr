@@ -23,7 +23,7 @@ class TomlConfig:
         try:
             self.values = pytoml.load(open(self.path, 'rb'))
         except Exception as e:
-            term.error('Failed Loading Toml Config: %s' % term.format_path(self.path))
+            term.error('Failed Loading Toml Config: %s -> %s' % (term.format_path(self.path), e))
             return False
         return True
 

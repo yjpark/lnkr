@@ -89,7 +89,7 @@ def link_import_section_wrapper_import(app_config, import_section, wrapper_confi
     link_import_section('Wrapper', app_config, wrapper_section, get_new_attribs_holders(attribs_holders, wrapper_config))
 
 def check_link_folder(kind, key, from_root_path, to_root_path, folder_config, attribs_holders):
-    from_path = folder_config.get_from_path(from_root_path)
+    from_path = folder_config.get_from_path(from_root_path, attribs_holders)
     to_path = folder_config.get_to_path(to_root_path, attribs_holders)
     ok = False
     if not from_path.startswith(from_root_path):

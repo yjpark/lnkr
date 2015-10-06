@@ -1,3 +1,9 @@
+0.1.5
+-----
+
+- Do the attrib conversion for from_path as well
+- add `mode_win` for windows platform override
+
 0.1.4
 -----
 
