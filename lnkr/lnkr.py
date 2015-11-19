@@ -46,15 +46,22 @@ def get_section_value(kind, values, key, optional):
 def get_attribs(attribs_holders):
     attribs = {}
     for holder in attribs_holders:
+        if hasattr(holder, 'path'):
+            holder_str = '[%s] %s' % (holder.__class__.__name__, holder.path)
+        else:
+            holder_str = '[%s] %s' % (holder.__class__.__name__, holder)
+
         if not hasattr(holder, 'attribs'):
+            term.verbose('Bypass Attribs Holder: %s' % holder_str)
             continue
         for key in holder.attribs:
             value = holder.attribs[key]
             if attribs.has_key(key):
                 old_value = attribs[key]
                 if old_value != value:
-                    info('Attrib Overrided: %s, %s -> %s' % (key, value, old_value))
+                    term.info('Attrib Overrided: %s: %s, %s -> %s' % (holder_str, key, value, old_value))
             else:
+                term.verbose('Attrib Set: %s: %s, %s' % (holder.path, key, value))
                 attribs[key] = value
     return attribs
 

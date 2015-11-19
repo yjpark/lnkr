@@ -89,6 +89,8 @@ class ImportSection:
             term.error('Load Import Section Failed: %s' % term.format_param(self.key))
 
     def get_component(self, key):
+        if self.package_config is None:
+            return None
         export_section = self.package_config.get_export_section(key)
         if export_section is not None:
             return export_section

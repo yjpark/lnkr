@@ -30,9 +30,6 @@ def link_import_section(kind, app_config, import_section, attribs_holders):
     link_import_section_component(app_config, import_section, import_section.key, get_new_attribs_holders(attribs_holders, import_section))
 
 def link_import_section_component(app_config, import_section, key, attribs_holders):
-    if app_config.is_component_linked(key):
-        #term.verbose('\nBypass Import Section: %s, Component: %s' % (term.format_param(import_section.key), term.format_param(key)))
-        return
     term.info('\nLinking Component, Section: %s, Key: %s' % (term.format_param(import_section.key), term.format_param(key)))
 
     error = 'Component Not Found'
@@ -40,7 +37,6 @@ def link_import_section_component(app_config, import_section, key, attribs_holde
     if component is not None:
         if isinstance(component, ExportSection):
             export_section = component
-            app_config.mark_linked_component(key, export_section)
             error = link_import_section_package_export(app_config, import_section, import_section.package_config, export_section, get_new_attribs_holders(attribs_holders, import_section.package_config))
         elif isinstance(component, ImportSection):
             wrapper_section = component
@@ -89,6 +85,7 @@ def link_import_section_wrapper_import(app_config, import_section, wrapper_confi
     link_import_section('Wrapper', app_config, wrapper_section, get_new_attribs_holders(attribs_holders, wrapper_config))
 
 def check_link_folder(kind, key, from_root_path, to_root_path, folder_config, attribs_holders):
+    term.verbose("Check Link Folder: %s -> %s" % (kind, key))
     from_path = folder_config.get_from_path(from_root_path, attribs_holders)
     to_path = folder_config.get_to_path(to_root_path, attribs_holders)
     ok = False

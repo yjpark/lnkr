@@ -11,7 +11,6 @@ class AppConfig(TomlConfig):
             self.kind = "App"
         self.attribs = {}
         self.import_sections = []
-        self.linked_components = {}
         TomlConfig.__init__(self, path)
 
     def parse(self):
@@ -36,8 +35,3 @@ class AppConfig(TomlConfig):
                 return section
         return None
 
-    def mark_linked_component(self, key, section):
-        self.linked_components[key] = section
-
-    def is_component_linked(self, key):
-        return self.linked_components.has_key(key)
