@@ -1,3 +1,9 @@
+0.1.6
+-----
+
+- Remove the logic to bypass linked component, which is not
+  working with multiple import section
+
 0.1.5
 -----
 
