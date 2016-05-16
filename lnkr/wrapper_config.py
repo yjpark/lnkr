@@ -1,6 +1,6 @@
-import lnkr
-import term
-from app_config import AppConfig
+from . import lnkr
+from . import term
+from .app_config import AppConfig
 
 class WrapperConfig(AppConfig):
     def __init__(self, path):

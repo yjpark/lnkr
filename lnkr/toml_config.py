@@ -2,8 +2,8 @@ import os
 
 import pytoml
 
-import lnkr
-import term
+from . import lnkr
+from . import term
 
 class TomlConfig:
     def __init__(self, path):

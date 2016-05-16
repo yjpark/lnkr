@@ -1,9 +1,9 @@
 import os
 import formic
 
-import lnkr
-import term
-from folder_config import FolderConfig
+from . import lnkr
+from . import term
+from .folder_config import FolderConfig
 
 KEY_INCLUDE = 'include'
 KEY_EXCLUDE = 'exclude'

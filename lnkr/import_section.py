@@ -1,7 +1,7 @@
 import os
 import sys
-import lnkr
-import term
+from . import lnkr
+from . import term
 
 KEY_LOCAL = 'local'
 KEY_REMOTE = 'remote'

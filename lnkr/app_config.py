@@ -1,9 +1,9 @@
 import os
 
-import lnkr
-import term
-from toml_config import TomlConfig
-from import_section import ImportSection, new_import_section
+from . import lnkr
+from . import term
+from .toml_config import TomlConfig
+from .import_section import ImportSection, new_import_section
 
 class AppConfig(TomlConfig):
     def __init__(self, path):
@@ -40,4 +40,4 @@ class AppConfig(TomlConfig):
         self.linked_components[key] = section
 
     def is_component_linked(self, key):
-        return self.linked_components.has_key(key)
+        return key in self.linked_components

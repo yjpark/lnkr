@@ -1,7 +1,7 @@
-import lnkr
-import term
-from toml_config import TomlConfig
-from export_section import ExportSection, new_export_section
+from . import lnkr
+from . import term
+from .toml_config import TomlConfig
+from .export_section import ExportSection, new_export_section
 
 class PackageConfig(TomlConfig):
     def __init__(self, path):

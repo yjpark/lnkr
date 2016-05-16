@@ -2,11 +2,11 @@ import os
 import shutil
 import linktastic
 
-import lnkr
-import term
+from . import lnkr
+from . import term
 
-from import_section import ImportSection, MODE_COPY, MODE_LINK, MODE_SYMLINK
-from export_section import ExportSection
+from .import_section import ImportSection, MODE_COPY, MODE_LINK, MODE_SYMLINK
+from .export_section import ExportSection
 
 def do_link_app(app_config):
     term.info('\nStart Linking App: %s' % term.format_path(app_config.path))
@@ -135,7 +135,7 @@ def do_link_folder(mode, key, from_path, to_path):
 def check_parent_folder(key, to_path):
     parent_path = os.path.dirname(to_path)
     if not os.path.exists(parent_path):
-        os.makedirs(parent_path, 0755)
+        os.makedirs(parent_path, 0o755)
     elif os.path.isfile(parent_path):
         term.info('Link Folder, Component: %s -> %s\n\tFrom: %s\n\tTo: %s' %
                 (term.format_param(key), term.format_error('"symlink" Failed: Parent Path is Not a Folder'), term.format_path(from_path), term.format_path(to_path)))

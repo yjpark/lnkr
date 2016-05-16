@@ -1,9 +1,9 @@
 import os
-import lnkr
-import term
+from . import lnkr
+from . import term
 
-from folder_config import FolderConfig
-from file_config import FileConfig
+from .folder_config import FolderConfig
+from .file_config import FileConfig
 
 KEY_FOLDERS = 'folders'
 KEY_FILES = 'files'

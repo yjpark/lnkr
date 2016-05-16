@@ -1,7 +1,7 @@
 import os
 
-import lnkr
-import term
+from . import lnkr
+from . import term
 
 KEY_FROM = 'from'
 KEY_TO = 'to'

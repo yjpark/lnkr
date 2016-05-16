@@ -6,11 +6,11 @@ import plistlib
 import datetime
 import pytz
 
-from app_config import AppConfig
-from package_config import PackageConfig
-from wrapper_config import WrapperConfig
-import processor
-import term
+from .app_config import AppConfig
+from .package_config import PackageConfig
+from .wrapper_config import WrapperConfig
+from . import processor
+from . import term
 
 PACKAGE_CONFIG_FILE_NAME = 'lnkr-export.toml'
 WRAPPER_CONFIG_FILE_NAME = 'lnkr-wrapper.toml'
@@ -35,7 +35,7 @@ skip_change_confirm = False
 def get_section_value(kind, values, key, optional):
     if not isinstance(values, dict):
         term.error('[%s] Section Should Be Dict: %s' % (kind, values))
-    if values.has_key(key):
+    if key in values:
         return values[key]
     elif optional:
         return None
@@ -50,7 +50,7 @@ def get_attribs(attribs_holders):
             continue
         for key in holder.attribs:
             value = holder.attribs[key]
-            if attribs.has_key(key):
+            if key in attribs:
                 old_value = attribs[key]
                 if old_value != value:
                     info('Attrib Overrided: %s, %s -> %s' % (key, value, old_value))
@@ -84,7 +84,7 @@ def query_all_yes_no(question, default=None):
 
     while True:
         term.error('\n' + question + term.format_param(prompt))
-        choice = raw_input().lower()
+        choice = input().lower()
         if default is not None and choice == '':
             return valid[default]
         elif choice in valid:

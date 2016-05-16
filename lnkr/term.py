@@ -1,6 +1,6 @@
 import sys
 
-import lnkr
+from . import lnkr
 
 def fake_color(str):
     return str
@@ -32,9 +32,9 @@ def set_verbose_mode(mode):
 
 def info(msg):
     if windows_mode:
-        print msg
+        print(msg)
     else:
-        print term.normal + msg
+        print(term.normal + msg)
 
 def verbose(msg):
     if verbose_mode:
@@ -42,9 +42,9 @@ def verbose(msg):
 
 def error(msg):
     if windows_mode:
-        print msg
+        print(msg)
     else:
-        print term.red + msg
+        print(term.red + msg)
 
 def format_error(err):
     return term.red(err)
