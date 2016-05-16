@@ -1,8 +1,9 @@
+from __future__ import absolute_import
+
 import os
 import shutil
 import linktastic
 
-from . import lnkr
 from . import term
 
 from .import_section import ImportSection, MODE_COPY, MODE_LINK, MODE_SYMLINK

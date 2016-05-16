@@ -1,8 +1,9 @@
+from __future__ import absolute_import
+
 import os
 
 import pytoml
 
-from . import lnkr
 from . import term
 
 class TomlConfig:

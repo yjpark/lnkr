@@ -1,6 +1,7 @@
+from __future__ import absolute_import
+
 import os
 
-from . import lnkr
 from . import term
 from .toml_config import TomlConfig
 from .import_section import ImportSection, new_import_section

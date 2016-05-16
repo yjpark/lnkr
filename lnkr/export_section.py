@@ -1,7 +1,8 @@
-import os
-from . import lnkr
-from . import term
+from __future__ import absolute_import
 
+import os
+
+from . import term
 from .folder_config import FolderConfig
 from .file_config import FileConfig
 

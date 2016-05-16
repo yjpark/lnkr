@@ -1,7 +1,8 @@
-import os
-import formic
+from __future__ import absolute_import
 
-from . import lnkr
+import os
+from pathlib import Path
+
 from . import term
 from .folder_config import FolderConfig
 
@@ -20,5 +21,8 @@ class FileConfig(FolderConfig):
         return ok
 
     def get_file_list(self, from_path):
-        file_set = formic.FileSet(directory=from_path, include=self.include, exclude=self.exclude)
-        return [os.path.relpath(file_name, from_path) for file_name in file_set]
+        includes = Path(from_path).glob(self.include)
+        filtered = includes
+        if self.exclude:
+            term.error("exclude not supported yet!")
+        return [os.path.relpath(file_name, from_path) for file_name in filtered]

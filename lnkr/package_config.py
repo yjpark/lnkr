@@ -1,4 +1,5 @@
-from . import lnkr
+from __future__ import absolute_import
+
 from . import term
 from .toml_config import TomlConfig
 from .export_section import ExportSection, new_export_section

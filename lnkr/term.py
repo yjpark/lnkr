@@ -1,7 +1,5 @@
 import sys
 
-from . import lnkr
-
 def fake_color(str):
     return str
 

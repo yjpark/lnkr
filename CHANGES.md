@@ -1,3 +1,9 @@
+0.2.0
+-----
+
+- Switch to python3
+- Do NOT use formic, since it doesn't support python3 ATM, use pathlib.Path.glob
+
 0.1.5
 -----
 

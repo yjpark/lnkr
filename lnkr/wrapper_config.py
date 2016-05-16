@@ -1,4 +1,5 @@
-from . import lnkr
+from __future__ import absolute_import
+
 from . import term
 from .app_config import AppConfig
 
