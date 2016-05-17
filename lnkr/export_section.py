@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 import os
 
+from . import util
 from . import term
 from .folder_config import FolderConfig
 from .file_config import FileConfig
@@ -26,7 +27,7 @@ class ExportSection:
             return 'Invalid: [%s] -> %s' % (self.key, self.values)
 
     def get_section_value(self, key, optional=False):
-        return lnkr.get_section_value('ExportSection', self.values, key, optional)
+        return util.get_section_value('ExportSection', self.values, key, optional)
 
     def parse(self):
         self.folders = []
@@ -55,7 +56,7 @@ class ExportSection:
         return True
 
 
-def new_export_section(key, values):
+def new_export_section(path, key, values):
     section = ExportSection(key, values)
     if section.valid:
         return section

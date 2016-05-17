@@ -7,7 +7,9 @@ import pytoml
 from . import term
 
 class TomlConfig:
-    def __init__(self, path):
+    def __init__(self, kind, path):
+        self.kind = kind
+        self.attribs = {}
         path = os.path.abspath(path)
         self.path = path
         self.root_path = os.path.dirname(path)
@@ -28,5 +30,18 @@ class TomlConfig:
             return False
         return True
 
-    def parse(self):
-        return True
+    def parse(self, sections, factory):
+        term.info('Parse %s Config: %s' % (self.kind, term.format_path(self.path)))
+        for key in self.values:
+            value = self.values[key]
+            if isinstance(value, dict):
+                section = factory(self.path, key, value)
+                if section is not None:
+                    sections.append(section)
+            else:
+                self.attribs[key] = value
+        for key in self.attribs:
+            term.verbose('Parse %s Config Attrib: %s = %s' % (self.kind, term.format_path(key), term.format_param(self.attribs[key])))
+        for section in sections:
+            term.verbose('Parse %s Config Section: %s' % (self.kind, term.format_param(section.__str__())))
+        return len(sections) > 0

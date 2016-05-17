@@ -47,7 +47,6 @@ setup(
         'blessings>=1.5.1',
         'linktastic',
         'pytoml',
-        'formic',
         ],
     cmdclass={'test': PyTest},
     packages=['lnkr'],

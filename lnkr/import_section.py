@@ -3,12 +3,12 @@ from __future__ import absolute_import
 import os
 import sys
 
+from . import util
 from . import term
 
 KEY_LOCAL = 'local'
 KEY_REMOTE = 'remote'
 KEY_MODE = 'mode'
-KEY_MODE_WIN = 'mode_win'
 
 MODE_COPY = 'copy'
 MODE_LINK = 'link'
@@ -33,13 +33,9 @@ class ImportSection:
             return 'Invalid: [%s] -> %s' % (self.key, self.values)
 
     def get_section_value(self, key, optional=False):
-        return lnkr.get_section_value('ImportSection', self.values, key, optional)
+        return util.get_section_value('ImportSection', self.values, key, optional)
 
     def get_mode(self):
-        if windows_mode:
-            mode_win = self.get_section_value(KEY_MODE_WIN, True)
-            if mode_win:
-                return mode_win
         return self.get_section_value(KEY_MODE, True)
 
     def parse(self):
@@ -54,9 +50,14 @@ class ImportSection:
         return True
 
     def do_load(self, package_path):
-        self.package_config = lnkr.load_package_config(package_path)
+        from . import package_config
+        self.package_config = package_config.load_package_config(package_path)
+        if self.package_config is None:
+            term.error("Failed to load package config %s" % package_path)
+            return False
 
-        self.wrapper_config = lnkr.load_wrapper_config(package_path)
+        from . import wrapper_config
+        self.wrapper_config = wrapper_config.load_wrapper_config(package_path)
         if self.wrapper_config is not None:
             self.wrapper_config.set_mode(self.mode)
 
@@ -91,17 +92,18 @@ class ImportSection:
             term.error('Load Import Section Failed: %s' % term.format_param(self.key))
 
     def get_component(self, key):
-        export_section = self.package_config.get_export_section(key)
-        if export_section is not None:
-            return export_section
-        elif self.wrapper_config is not None:
+        if self.package_config is not None:
+            export_section = self.package_config.get_export_section(key)
+            if export_section is not None:
+                return export_section
+        if self.wrapper_config is not None:
             wrapper_section = self.wrapper_config.get_wrapper_section(key)
             if wrapper_section is not None:
                 return wrapper_section
         return None
 
 def new_import_section(path, key, values):
-    section = ImportSection(path, key, values)
+    section = ImportSection(os.path.dirname(path), key, values)
     if section.valid:
         return section
     else:

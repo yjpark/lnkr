@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import os
 from pathlib import Path
 
+from . import util
 from . import term
 from .folder_config import FolderConfig
 
@@ -11,7 +12,7 @@ KEY_EXCLUDE = 'exclude'
 
 class FileConfig(FolderConfig):
     def get_section_value(self, key, optional=False):
-        return lnkr.get_section_value('FileConfig', self.values, key, optional)
+        return util.get_section_value('FileConfig', self.values, key, optional)
 
     def parse(self):
         ok = FolderConfig.parse(self)
@@ -25,4 +26,4 @@ class FileConfig(FolderConfig):
         filtered = includes
         if self.exclude:
             term.error("exclude not supported yet!")
-        return [os.path.relpath(file_name, from_path) for file_name in filtered]
+        return [os.path.relpath(path.as_posix(), from_path) for path in filtered]

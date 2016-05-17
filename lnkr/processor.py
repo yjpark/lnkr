@@ -4,12 +4,16 @@ import os
 import shutil
 import linktastic
 
+from . import util
 from . import term
 
 from .import_section import ImportSection, MODE_COPY, MODE_LINK, MODE_SYMLINK
 from .export_section import ExportSection
 
 def do_link_app(app_config):
+    for section in app_config.import_sections:
+        load_import_section('Import', app_config, section)
+
     term.info('\nStart Linking App: %s' % term.format_path(app_config.path))
     for section in app_config.import_sections:
         link_import_section('Import', app_config, section, [app_config])
@@ -23,11 +27,19 @@ def get_new_attribs_holders(attribs_holders, new_holder):
         new_attribs_holders.append(new_holder)
         return new_attribs_holders
 
-def link_import_section(kind, app_config, import_section, attribs_holders):
-    term.info('\nLoading %s Section: %s' % (kind, term.format_param(import_section.key)))
-    import_section.load()
-    if not import_section.loaded:
+def load_import_section(kind, app_config, import_section):
+    key = import_section.key
+    if app_config.is_component_loaded(key):
         return
+    term.info('\nLoading %s Section: %s' % (kind, term.format_param(import_section.key)))
+    app_config.mark_loaded_component(key, import_section)
+    import_section.load()
+    if import_section.loaded:
+        if import_section.wrapper_config is not None:
+            for wrapper_section in import_section.wrapper_config.import_sections:
+                load_import_section("Wrapper", app_config, wrapper_section)
+
+def link_import_section(kind, app_config, import_section, attribs_holders):
     link_import_section_component(app_config, import_section, import_section.key, get_new_attribs_holders(attribs_holders, import_section))
 
 def link_import_section_component(app_config, import_section, key, attribs_holders):
@@ -42,13 +54,16 @@ def link_import_section_component(app_config, import_section, key, attribs_holde
         if isinstance(component, ExportSection):
             export_section = component
             app_config.mark_linked_component(key, export_section)
-            error = link_import_section_package_export(app_config, import_section, import_section.package_config, export_section, get_new_attribs_holders(attribs_holders, import_section.package_config))
+            error = link_import_section_package_export(app_config, import_section, import_section.package_config,
+                        export_section, get_new_attribs_holders(attribs_holders, import_section.package_config))
         elif isinstance(component, ImportSection):
             wrapper_section = component
-            error = link_import_section_wrapper_import(app_config, import_section, import_section.wrapper_config, wrapper_section, attribs_holders)
+            error = link_import_section_wrapper_import(app_config, import_section, import_section.wrapper_config,
+                        wrapper_section, attribs_holders)
 
     if error is not None:
         term.error('\nLinking Component Failed, Section: %s, Key: %s, Reason: %s' % (term.format_param(import_section.key), term.format_param(key), error))
+
 
 # GOCHA: it's a bit messy here, since want to put the dependencies' attribs inside the accessor
 def update_required_attribs_holders(attribs_holders, import_section, require_key):
@@ -118,10 +133,10 @@ def cleanup_path(to_path):
         os.remove(to_path)
 
 def do_link_folder(mode, key, from_path, to_path):
-    if lnkr.test_mode:
+    if util.test_mode:
         term.info('Link Folder, Component: %s -> %s\n\tFrom: %s\n\tTo: %s' %
                 (term.format_param(key), term.format_error('Test Mode, NOT Doing Anything'), term.format_path(from_path), term.format_path(to_path)))
-    elif not os.path.exists(to_path) or lnkr.confirm_change('Changes In Folder Will be Lost, Are You Sure?\n%s, %s' % (term.format_param(key), term.format_path(to_path))):
+    elif not os.path.exists(to_path) or util.confirm_change('Changes In Folder Will be Lost, Are You Sure?\n%s, %s' % (term.format_param(key), term.format_path(to_path))):
         cleanup_path(to_path)
         if mode == MODE_COPY:
             do_link_folder_copy(key, from_path, to_path)
@@ -176,10 +191,10 @@ def do_link_folder_symlink(key, from_path, to_path):
 def do_link_file(mode, key, from_path, to_path, file_path):
     from_path = os.path.join(from_path, file_path)
     to_path = os.path.join(to_path, file_path)
-    if lnkr.test_mode:
+    if util.test_mode:
         term.info('Link File, Component: %s -> %s\n\tFrom: %s\n\tTo: %s' %
                 (term.format_param(key), term.format_error('Test Mode, NOT Doing Anything'), term.format_path(from_path), term.format_path(to_path)))
-    elif not os.path.exists(to_path) or lnkr.confirm_change('Change of File Will be Lost, Are You Sure?\n%s, %s' % (term.format_param(key), term.format_path(to_path))):
+    elif not os.path.exists(to_path) or util.confirm_change('Change of File Will be Lost, Are You Sure?\n%s, %s' % (term.format_param(key), term.format_path(to_path))):
         if mode == MODE_COPY:
             do_link_file_copy(key, from_path, to_path)
         elif mode == MODE_LINK:

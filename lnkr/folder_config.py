@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 import os
 
+from . import util
 from . import term
 
 KEY_FROM = 'from'
@@ -13,7 +14,7 @@ class FolderConfig:
         self.valid = self.parse()
 
     def get_section_value(self, key, optional=False):
-        return lnkr.get_section_value('FolderConfig', self.values, key, optional)
+        return util.get_section_value('FolderConfig', self.values, key, optional)
 
     def parse(self):
         self.from_value = self.get_section_value(KEY_FROM, True)
@@ -26,7 +27,7 @@ class FolderConfig:
         return True
 
     def convert_path(self, path, attribs_holders):
-        attribs = lnkr.get_attribs(attribs_holders)
+        attribs = util.get_attribs(attribs_holders)
         for key in attribs:
             old_path = path
             path = path.replace('${%s}' % key, attribs[key])
