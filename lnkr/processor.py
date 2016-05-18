@@ -40,13 +40,13 @@ def load_import_section(kind, app_config, import_section):
                 load_import_section("Wrapper", app_config, wrapper_section)
 
 def link_import_section(kind, app_config, import_section, attribs_holders):
-    link_import_section_component(app_config, import_section, import_section.key, get_new_attribs_holders(attribs_holders, import_section))
+    link_import_section_component(kind, app_config, import_section, import_section.key, get_new_attribs_holders(attribs_holders, import_section))
 
-def link_import_section_component(app_config, import_section, key, attribs_holders):
+def link_import_section_component(kind, app_config, import_section, key, attribs_holders):
     if app_config.is_component_linked(key):
         #term.verbose('\nBypass Import Section: %s, Component: %s' % (term.format_param(import_section.key), term.format_param(key)))
         return
-    term.info('\nLinking Component, Section: %s, Key: %s' % (term.format_param(import_section.key), term.format_param(key)))
+    term.info('\nLinking %s Component, Section: %s, Key: %s' % (kind, term.format_param(import_section.key), term.format_param(key)))
 
     error = 'Component Not Found'
     component = import_section.get_component(key)
@@ -87,7 +87,7 @@ def link_import_section_package_export(app_config, import_section, package_confi
     new_attribs_holders = get_new_attribs_holders(attribs_holders, export_section)
 
     for require_key in export_section.requires:
-        link_import_section_component(app_config, import_section, require_key, new_attribs_holders)
+        link_import_section_component('Require', app_config, import_section, require_key, new_attribs_holders)
 
     link_attribs_holders = get_required_attribs_holders(new_attribs_holders, import_section, export_section.requires)
     for folder in export_section.folders:
