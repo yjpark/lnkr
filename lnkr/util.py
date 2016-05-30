@@ -13,6 +13,7 @@ YES = 'yes'
 NO = 'no'
 
 test_mode = False
+backward_mode = False
 
 skip_change_confirm = False
 

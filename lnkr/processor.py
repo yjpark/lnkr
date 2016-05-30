@@ -122,7 +122,9 @@ def check_link_folder(kind, key, from_root_path, to_root_path, folder_config, at
     return ok, from_path, to_path
 
 def cleanup_path(to_path):
-    if os.path.islink(to_path):
+    if util.backward_mode:
+        return
+    elif os.path.islink(to_path):
         term.info('Remove Link: %s' % term.format_path(to_path))
         os.remove(to_path)
     elif os.path.isdir(to_path):
@@ -161,10 +163,15 @@ def check_parent_folder(key, to_path):
 def do_link_folder_copy(key, from_path, to_path):
     if not check_parent_folder(key, to_path):
         return
-    #TODO: not using os.system to support Windows
-    os.system('cp -r %s "%s" "%s"' % (term.verbose_mode and '-v' or '', from_path, to_path))
-    term.info('Link Folder, Component: %s -> %s\n\tFrom: %s\n\tTo: %s' %
-            (term.format_param(key), term.format_param('"copy" Done'), term.format_path(from_path), term.format_path(to_path)))
+    if util.backward_mode:
+        os.system('rm -rf %s "%s"' % (term.verbose_mode and '-v' or '', from_path))
+        os.system('cp -r %s "%s" "%s"' % (term.verbose_mode and '-v' or '', to_path, from_path))
+        term.info('Backward Link Folder, Component: %s -> %s\n\tFrom: %s\n\tTo: %s' %
+                (term.format_param(key), term.format_param('"copy" Done'), term.format_path(from_path), term.format_path(to_path)))
+    else:
+        os.system('cp -r %s "%s" "%s"' % (term.verbose_mode and '-v' or '', from_path, to_path))
+        term.info('Link Folder, Component: %s -> %s\n\tFrom: %s\n\tTo: %s' %
+                (term.format_param(key), term.format_param('"copy" Done'), term.format_path(from_path), term.format_path(to_path)))
 
 def do_link_folder_link(key, from_path, to_path):
     term.info('Link Folder, Component: %s -> %s\n\tFrom: %s\n\tTo: %s' %
@@ -208,10 +215,14 @@ def do_link_file(mode, key, from_path, to_path, file_path):
 def do_link_file_copy(key, from_path, to_path):
     if not check_parent_folder(key, to_path):
         return
-    #TODO: not using os.system to support Windows
-    os.system('cp %s "%s" "%s"' % (term.verbose_mode and '-v' or '', from_path, to_path))
-    term.info('Link File, Component: %s -> %s\n\tFrom: %s\n\tTo: %s' %
-            (term.format_param(key), term.format_param('"copy" Done'), term.format_path(from_path), term.format_path(to_path)))
+    if util.backward_mode:
+        os.system('cp %s "%s" "%s"' % (term.verbose_mode and '-v' or '', to_path, from_path))
+        term.info('Backward Link File, Component: %s -> %s\n\tFrom: %s\n\tTo: %s' %
+                (term.format_param(key), term.format_param('"copy" Done'), term.format_path(from_path), term.format_path(to_path)))
+    else:
+        os.system('cp %s "%s" "%s"' % (term.verbose_mode and '-v' or '', from_path, to_path))
+        term.info('Link File, Component: %s -> %s\n\tFrom: %s\n\tTo: %s' %
+                (term.format_param(key), term.format_param('"copy" Done'), term.format_path(from_path), term.format_path(to_path)))
 
 def do_link_file_link(key, from_path, to_path):
     term.info('Link File, Component: %s -> %s\n\tFrom: %s\n\tTo: %s' %

@@ -82,6 +82,8 @@ def main():
     parser.add_argument('-t', '--test', action='store_true',
                         help='Test Only, Do not do any real change')
 
+    parser.add_argument('-b', '--backward', action='store_true',
+                        help='Copy working files back to source (only in copy mode)')
     parser.add_argument('-l', '--lint', action='store_true',
                         help='Validate the lnkr config files')
     parser.add_argument('-c', '--clean', action='store_true',
@@ -93,6 +95,7 @@ def main():
     term.set_verbose_mode(args.verbose)
 
     util.test_mode = args.test
+    util.backward_mode = args.backward
 
     if args.lint:
         do_lint(args)
