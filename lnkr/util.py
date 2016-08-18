@@ -38,7 +38,7 @@ def get_attribs(attribs_holders):
             if key in attribs:
                 old_value = attribs[key]
                 if old_value != value:
-                    info('Attrib Overrided: %s, %s -> %s' % (key, value, old_value))
+                    term.info('Attrib Overrided: %s, %s -> %s' % (key, value, old_value))
             else:
                 attribs[key] = value
     return attribs
