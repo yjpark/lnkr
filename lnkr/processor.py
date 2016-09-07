@@ -43,9 +43,6 @@ def link_import_section(kind, app_config, import_section, attribs_holders):
     link_import_section_component(kind, app_config, import_section, import_section.key, get_new_attribs_holders(attribs_holders, import_section))
 
 def link_import_section_component(kind, app_config, import_section, key, attribs_holders):
-    if app_config.is_component_linked(key):
-        #term.verbose('\nBypass Import Section: %s, Component: %s' % (term.format_param(import_section.key), term.format_param(key)))
-        return
     term.info('\nLinking %s Component, Section: %s, Key: %s' % (kind, term.format_param(import_section.key), term.format_param(key)))
 
     error = 'Component Not Found'
@@ -53,7 +50,6 @@ def link_import_section_component(kind, app_config, import_section, key, attribs
     if component is not None:
         if isinstance(component, ExportSection):
             export_section = component
-            app_config.mark_linked_component(key, export_section)
             error = link_import_section_package_export(app_config, import_section, import_section.package_config,
                         export_section, get_new_attribs_holders(attribs_holders, import_section.package_config))
         elif isinstance(component, ImportSection):
