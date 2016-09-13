@@ -36,7 +36,7 @@ class AppConfig(ImportConfig):
             if key in self.all_attribs:
                 old_value = self.all_attribs[key]
                 if old_value != value:
-                    term.error('Attrib Overrided: %s, %s -> %s' % (term.format_path(key), term.format_param(value), term.format_param(old_value)))
+                    term.info('Attrib %s: %s, %s -> %s' % (term.format_error('Overrided'), term.format_path(key), term.format_param(value), term.format_param(old_value)))
             else:
                 term.verbose('Attrib Defined: %s = %s' % (term.format_path(key), term.format_param(value)))
                 self.all_attribs[key] = value
