@@ -1,3 +1,8 @@
+0.3.0
+-----
+
+- Cleanup how to handle attribs
+
 0.2.0
 -----
 

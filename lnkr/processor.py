@@ -14,16 +14,16 @@ def do_link_app(app_config):
     for section in app_config.import_sections:
         load_import_section('Import', app_config, section)
 
-    term.info('\nStart Linking App: %s' % term.format_path(app_config.path))
+    term.info('\nStart Linking App: %s len(all_attribs) = %s' % (term.format_path(app_config.path), len(app_config.all_attribs)))
+    keys = []
+    for key in app_config.all_attribs:
+        keys.append(key)
+    keys.sort()
+    for key in keys:
+        term.info("\t%s = %s" % (term.format_path(key), term.format_param(app_config.all_attribs[key])))
     for section in app_config.import_sections:
-        link_import_section('Import', app_config, section, [app_config])
+        link_import_section('Import', app_config, section)
     term.info('\nFinish Linking App: %s' % term.format_path(app_config.path))
-
-def get_new_attribs_holders(attribs_holders, new_holder):
-    new_attribs_holders = list(attribs_holders)
-    if not new_holder in attribs_holders:
-        new_attribs_holders.append(new_holder)
-    return new_attribs_holders
 
 def load_import_section(kind, app_config, import_section):
     key = import_section.key
@@ -33,14 +33,18 @@ def load_import_section(kind, app_config, import_section):
     app_config.mark_loaded_component(key, import_section)
     import_section.load()
     if import_section.loaded:
+        app_config.append_all_attribs(import_section)
+        if import_section.package_config is not None:
+            app_config.append_all_attribs(import_section.package_config)
         if import_section.wrapper_config is not None:
+            app_config.append_all_attribs(import_section.wrapper_config)
             for wrapper_section in import_section.wrapper_config.import_sections:
                 load_import_section("Wrapper", app_config, wrapper_section)
 
-def link_import_section(kind, app_config, import_section, attribs_holders):
-    link_import_section_component(kind, app_config, import_section, import_section.key, get_new_attribs_holders(attribs_holders, import_section))
+def link_import_section(kind, app_config, import_section):
+    link_import_section_component(kind, app_config, import_section, import_section.key)
 
-def link_import_section_component(kind, app_config, import_section, key, attribs_holders):
+def link_import_section_component(kind, app_config, import_section, key):
     if app_config.is_component_linked(key):
         term.verbose('\nBypass Import Section: %s, Component: %s' % (term.format_param(import_section.key), term.format_param(key)))
         return
@@ -53,57 +57,37 @@ def link_import_section_component(kind, app_config, import_section, key, attribs
             export_section = component
             app_config.mark_linked_component(key, export_section)
             error = link_import_section_package_export(app_config, import_section, import_section.package_config,
-                        export_section, get_new_attribs_holders(attribs_holders, import_section.package_config))
+                        export_section)
         elif isinstance(component, ImportSection):
             wrapper_section = component
             error = link_import_section_wrapper_import(app_config, import_section, import_section.wrapper_config,
-                        wrapper_section, attribs_holders)
+                        wrapper_section)
 
     if error is not None:
         term.error('\nLinking Component Failed, Section: %s, Key: %s, Reason: %s' % (term.format_param(import_section.key), term.format_param(key), error))
 
-# GOCHA: it's a bit messy here, since want to put the dependencies' attribs inside the accessor
-def update_required_attribs_holders(attribs_holders, import_section, require_key):
-    component = import_section.get_component(require_key)
-    if component is not None:
-        if isinstance(component, ExportSection):
-            attribs_holders = get_new_attribs_holders(attribs_holders, import_section.package_config)
-            attribs_holders = get_new_attribs_holders(attribs_holders, component)
-            attribs_holders = get_required_attribs_holders(attribs_holders, import_section, component.requires)
-        elif isinstance(component, ImportSection):
-            attribs_holders = get_new_attribs_holders(attribs_holders, import_section.wrapper_config)
-            attribs_holders = update_required_attribs_holders(attribs_holders, component, require_key)
-    return attribs_holders
-
-def get_required_attribs_holders(attribs_holders, import_section, requires):
-    for require_key in requires:
-        attribs_holders = update_required_attribs_holders(attribs_holders, import_section, require_key)
-    return attribs_holders
-
-def link_import_section_package_export(app_config, import_section, package_config, export_section, attribs_holders):
-    new_attribs_holders = get_new_attribs_holders(attribs_holders, export_section)
-
+def link_import_section_package_export(app_config, import_section, package_config, export_section):
     for require_key in export_section.requires:
-        link_import_section_component('Require', app_config, import_section, require_key, new_attribs_holders)
+        link_import_section_component('Require', app_config, import_section, require_key)
 
-    link_attribs_holders = get_required_attribs_holders(new_attribs_holders, import_section, export_section.requires)
     for folder in export_section.folders:
-        ok, from_path, to_path = check_link_folder('Folder', export_section.key, package_config.root_path, app_config.root_path, folder, link_attribs_holders)
+        ok, from_path, to_path = check_link_folder('Folder', app_config, export_section.key, package_config.root_path, folder)
         if ok:
             do_link_folder(import_section.mode, export_section.key, from_path, to_path)
     for fc in export_section.files:
-        ok, from_path, to_path = check_link_folder('File', export_section.key, package_config.root_path, app_config.root_path, fc, link_attribs_holders)
+        ok, from_path, to_path = check_link_folder('File', app_config, export_section.key, package_config.root_path, fc)
         if ok:
             files = fc.get_file_list(from_path)
             for f in files:
                 do_link_file(import_section.mode, export_section.key, from_path, to_path, f)
 
-def link_import_section_wrapper_import(app_config, import_section, wrapper_config, wrapper_section, attribs_holders):
-    link_import_section('Wrapper', app_config, wrapper_section, get_new_attribs_holders(attribs_holders, wrapper_config))
+def link_import_section_wrapper_import(app_config, import_section, wrapper_config, wrapper_section):
+    link_import_section('Wrapper', app_config, wrapper_section)
 
-def check_link_folder(kind, key, from_root_path, to_root_path, folder_config, attribs_holders):
-    from_path = folder_config.get_from_path(from_root_path, attribs_holders)
-    to_path = folder_config.get_to_path(to_root_path, attribs_holders)
+def check_link_folder(kind, app_config, key, from_root_path, folder_config):
+    to_root_path = app_config.root_path
+    from_path = folder_config.get_from_path(from_root_path, app_config.all_attribs)
+    to_path = folder_config.get_to_path(to_root_path, app_config.all_attribs)
     ok = False
     if not folder_config.is_valid_path(from_path):
         term.error('Link %s Failed, Component: %s\n\tFrom Root: %s\n\tInvalid From: %s' %
@@ -111,7 +95,6 @@ def check_link_folder(kind, key, from_root_path, to_root_path, folder_config, at
     elif not folder_config.is_valid_path(to_path):
         term.error('Link %s Failed, Component: %s\n\tTo Root: %s\n\tInvalid To: %s' %
                 (kind, term.format_param(key), term.format_path(to_root_path), term.format_path(to_path)))
-        term.error('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA %s' % len(attribs_holders))
     elif not from_path.startswith(from_root_path):
         term.error('Link %s Failed, Component: %s\n\tFrom Root: %s\n\tInvalid From: %s' %
                 (kind, term.format_param(key), term.format_path(from_root_path), term.format_path(from_path)))

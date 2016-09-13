@@ -26,12 +26,12 @@ class FolderConfig:
 
         return True
 
-    def convert_path(self, path, attribs_holders):
-        attribs = util.get_attribs(attribs_holders)
+    def convert_path(self, path, attribs):
         for key in attribs:
             old_path = path
             path = path.replace('${%s}' % key, attribs[key])
-            term.verbose('\nUpdate Path: %s = %s\n\tFrom: %s\n\tTo: %s' % (term.format_param(key), term.format_param(attribs[key]), term.format_path(old_path), term.format_path(path)))
+            if old_path != path:
+                term.verbose('\nUpdate Path: %s = %s\n\tFrom: %s\n\tTo: %s' % (term.format_param(key), term.format_param(attribs[key]), term.format_path(old_path), term.format_path(path)))
         return path
 
     def get_from_path(self, root_path, attribs_holders):

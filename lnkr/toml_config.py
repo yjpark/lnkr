@@ -26,7 +26,7 @@ class TomlConfig:
         if self.valid:
             return '[TomlConfig: %s %s -> %s]' % (self.kind, self.path, self.attribs)
         else:
-            return '[Invalid TomlConfig: %s %s -> %s]' % (self.Kind, self.path, self.values)
+            return '[Invalid TomlConfig: %s %s -> %s]' % (self.kind, self.path, self.values)
 
     def load(self):
         try:

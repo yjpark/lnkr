@@ -28,24 +28,6 @@ def get_section_value(kind, values, key, optional):
         term.error('[%s] Invalid Section: %s Not Exist -> %s' % (kind, key, values))
         sys.exit(EXIT_CODE_INVALID_SECTION)
 
-def get_attribs(attribs_holders):
-    attribs = {}
-    for holder in attribs_holders:
-        if not hasattr(holder, 'attribs'):
-            term.verbose('Bypass Attrib Holder: %s' % holder)
-            continue
-        term.verbose('Use Attrib Holder: %s -> %s' % (holder, holder.attribs))
-        for key in holder.attribs:
-            value = holder.attribs[key]
-            if key in attribs:
-                old_value = attribs[key]
-                if old_value != value:
-                    term.info('Attrib Overrided: %s, %s -> %s' % (key, value, old_value))
-            else:
-                term.verbose('Attrib Defined: %s = %s' % (key, value))
-                attribs[key] = value
-    return attribs
-
 def query_all_yes_no(question, default=None):
     """Ask a yes/no question via raw_input() and return their answer.
 
