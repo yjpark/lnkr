@@ -20,12 +20,10 @@ def do_link_app(app_config):
     term.info('\nFinish Linking App: %s' % term.format_path(app_config.path))
 
 def get_new_attribs_holders(attribs_holders, new_holder):
-    if new_holder in attribs_holders:
-        return attribs_holders
-    else:
-        new_attribs_holders = list(attribs_holders)
+    new_attribs_holders = list(attribs_holders)
+    if not new_holder in attribs_holders:
         new_attribs_holders.append(new_holder)
-        return new_attribs_holders
+    return new_attribs_holders
 
 def load_import_section(kind, app_config, import_section):
     key = import_section.key
@@ -44,7 +42,7 @@ def link_import_section(kind, app_config, import_section, attribs_holders):
 
 def link_import_section_component(kind, app_config, import_section, key, attribs_holders):
     if app_config.is_component_linked(key):
-        #term.verbose('\nBypass Import Section: %s, Component: %s' % (term.format_param(import_section.key), term.format_param(key)))
+        term.verbose('\nBypass Import Section: %s, Component: %s' % (term.format_param(import_section.key), term.format_param(key)))
         return
     term.info('\nLinking %s Component, Section: %s, Key: %s' % (kind, term.format_param(import_section.key), term.format_param(key)))
 
@@ -63,7 +61,6 @@ def link_import_section_component(kind, app_config, import_section, key, attribs
 
     if error is not None:
         term.error('\nLinking Component Failed, Section: %s, Key: %s, Reason: %s' % (term.format_param(import_section.key), term.format_param(key), error))
-
 
 # GOCHA: it's a bit messy here, since want to put the dependencies' attribs inside the accessor
 def update_required_attribs_holders(attribs_holders, import_section, require_key):
@@ -108,7 +105,14 @@ def check_link_folder(kind, key, from_root_path, to_root_path, folder_config, at
     from_path = folder_config.get_from_path(from_root_path, attribs_holders)
     to_path = folder_config.get_to_path(to_root_path, attribs_holders)
     ok = False
-    if not from_path.startswith(from_root_path):
+    if not folder_config.is_valid_path(from_path):
+        term.error('Link %s Failed, Component: %s\n\tFrom Root: %s\n\tInvalid From: %s' %
+                (kind, term.format_param(key), term.format_path(from_root_path), term.format_path(from_path)))
+    elif not folder_config.is_valid_path(to_path):
+        term.error('Link %s Failed, Component: %s\n\tTo Root: %s\n\tInvalid To: %s' %
+                (kind, term.format_param(key), term.format_path(to_root_path), term.format_path(to_path)))
+        term.error('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA %s' % len(attribs_holders))
+    elif not from_path.startswith(from_root_path):
         term.error('Link %s Failed, Component: %s\n\tFrom Root: %s\n\tInvalid From: %s' %
                 (kind, term.format_param(key), term.format_path(from_root_path), term.format_path(from_path)))
     elif not to_path.startswith(to_root_path):

@@ -22,9 +22,9 @@ class ExportSection:
 
     def __str__(self):
         if self.valid:
-            return '[%s] -> {len(folders) = %s, len(files) = %s, len(requires) = %s}' % (self.key, len(self.folders), len(self.files), len(self.requires))
+            return '[ExportSection: %s -> {len(folders) = %s, len(files) = %s, len(requires) = %s}]' % (self.key, len(self.folders), len(self.files), len(self.requires))
         else:
-            return 'Invalid: [%s] -> %s' % (self.key, self.values)
+            return '[Invalid ExportSection: %s -> %s]' % (self.key, self.values)
 
     def get_section_value(self, key, optional=False):
         return util.get_section_value('ExportSection', self.values, key, optional)

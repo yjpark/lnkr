@@ -22,6 +22,12 @@ class TomlConfig:
             if not self.valid:
                 term.error('Invalid Config [%s]: %s' % (self.__class__, term.format_path(self.path)))
 
+    def __str__(self):
+        if self.valid:
+            return '[TomlConfig: %s %s -> %s]' % (self.kind, self.path, self.attribs)
+        else:
+            return '[Invalid TomlConfig: %s %s -> %s]' % (self.Kind, self.path, self.values)
+
     def load(self):
         try:
             self.values = pytoml.load(open(self.path, 'rb'))

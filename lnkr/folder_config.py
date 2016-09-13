@@ -41,3 +41,8 @@ class FolderConfig:
     def get_to_path(self, root_path, attribs_holders):
         to_path = os.path.join(root_path, self.to_value)
         return self.convert_path(to_path, attribs_holders)
+
+    def is_valid_path(self, path):
+        if path.find('${') >= 0:
+            return False
+        return True

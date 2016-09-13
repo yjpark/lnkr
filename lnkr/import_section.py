@@ -28,9 +28,9 @@ class ImportSection:
 
     def __str__(self):
         if self.valid:
-            return '[%s] -> {local = "%s", remote = "%s", mode = "%s"}' % (self.key, self.local, self.remote, self.mode)
+            return '[ImportSection: %s -> {local = "%s", remote = "%s", mode = "%s"}]' % (self.key, self.local, self.remote, self.mode)
         else:
-            return 'Invalid: [%s] -> %s' % (self.key, self.values)
+            return '[Invalid ImportSection: %s -> %s]' % (self.key, self.values)
 
     def get_section_value(self, key, optional=False):
         return util.get_section_value('ImportSection', self.values, key, optional)
