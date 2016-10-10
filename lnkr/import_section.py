@@ -32,6 +32,15 @@ class ImportSection:
         else:
             return '[Invalid ImportSection: %s -> %s]' % (self.key, self.values)
 
+    def log_detail(self, prefix):
+        term.info('\n%s%s -> %s' % (prefix, term.format_path(self.path), term.format_param(str(self))))
+        if self.package_config is not None:
+            self.package_config.log_detail(prefix + "\t")
+        if self.wrapper_config is not None:
+            self.wrapper_config.log_detail(prefix + "\t")
+        if self.package_config is None and self.wrapper_config is None:
+            term.error('\n%sInvalid ImportSection: %s -> %s' % (prefix, term.format_path(self.path), term.format_param(self.key)))
+
     def get_section_value(self, key, optional=False):
         return util.get_section_value('ImportSection', self.values, key, optional)
 
@@ -81,6 +90,7 @@ class ImportSection:
         return False
 
     def load(self):
+        term.info('Load Import Section: %s -> %s' % (term.format_path(self.path), term.format_param(self.key)))
         if not self.check_mode():
             return False
 
@@ -89,9 +99,13 @@ class ImportSection:
         elif self.remote is not None:
             self.loaded = self.load_remote()
         if not self.loaded:
-            term.error('Load Import Section Failed: %s' % term.format_param(self.key))
+            term.error('Load Import Section Failed: %s -> %s' % (term.format_path(self.path), term.format_param(self.key)))
 
     def get_component(self, key):
+        #TODO: It's messy about the dependencies, quick fix for now
+        if not self.loaded:
+            self.load()
+
         if self.package_config is not None:
             export_section = self.package_config.get_export_section(key)
             if export_section is not None:

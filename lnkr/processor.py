@@ -65,6 +65,7 @@ def link_import_section_component(kind, app_config, import_section, key):
 
     if error is not None:
         term.error('\nLinking Component Failed, Section: %s, Key: %s, Reason: %s' % (term.format_param(import_section.key), term.format_param(key), error))
+        import_section.log_detail("\t");
 
 def link_import_section_package_export(app_config, import_section, package_config, export_section):
     for require_key in export_section.requires:
